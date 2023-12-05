@@ -28,15 +28,12 @@ typedef struct client_registry CLIENT_REGISTRY;
 /*
  * Initialize a new client registry.
  *
- * @return  the newly initialized client registry, or NULL if initialization
- * fails.
+ * @return  the newly initialized client registry.
  */
 CLIENT_REGISTRY *creg_init();
 
 /*
- * Finalize a client registry, freeing all associated resources.
- * This method should not be called unless there are no currently
- * registered clients.
+ * Finalize a client registry.
  *
  * @param cr  The client registry to be finalized, which must not
  * be referenced again.
@@ -48,40 +45,29 @@ void creg_fini(CLIENT_REGISTRY *cr);
  *
  * @param cr  The client registry.
  * @param fd  The file descriptor to be registered.
- * @return 0 if registration is successful, otherwise -1.
  */
-int creg_register(CLIENT_REGISTRY *cr, int fd);
+void creg_register(CLIENT_REGISTRY *cr, int fd);
 
 /*
- * Unregister a client file descriptor, removing it from the registry.
- * If the number of registered clients is now zero, then any threads that
- * are blocked in creg_wait_for_empty() waiting for this situation to occur
- * are allowed to proceed.  It is an error if the CLIENT is not currently
- * registered when this function is called.
+ * Unregister a client file descriptor, alerting anybody waiting
+ * for the registered set to become empty.
  *
  * @param cr  The client registry.
  * @param fd  The file descriptor to be unregistered.
- * @return 0  if unregistration succeeds, otherwise -1.
  */
-int creg_unregister(CLIENT_REGISTRY *cr, int fd);
+void creg_unregister(CLIENT_REGISTRY *cr, int fd);
 
 /*
  * A thread calling this function will block in the call until
  * the number of registered clients has reached zero, at which
- * point the function will return.  Note that this function may be
- * called concurrently by an arbitrary number of threads.
+ * point the function will return.
  *
  * @param cr  The client registry.
  */
 void creg_wait_for_empty(CLIENT_REGISTRY *cr);
 
 /*
- * Shut down (using shutdown(2)) all the sockets for connections
- * to currently registered clients.  The file descriptors are not
- * unregistered by this function.  It is intended that the file
- * descriptors will be unregistered by the threads servicing their
- * connections, once those server threads have recognized the EOF
- * on the connection that has resulted from the socket shutdown.
+ * Shut down all the currently registered client file descriptors.
  *
  * @param cr  The client registry.
  */
