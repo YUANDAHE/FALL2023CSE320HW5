@@ -148,7 +148,7 @@ TRANS_STATUS store_put(TRANSACTION *tp, KEY *key, BLOB *value);
  * @param tp  The transaction in which the operation is being performed.
  * @param key  The key.
  * @param valuep  A variable into which a returned value pointer may be
- *   stored.  The value pointer store may be NULL, indicating that there
+ *   stored.  The value pointer stored may be NULL, indicating that there
  *   is no value currently associated in the store with the specified key.
  * @return  Updated status of the transation, either TRANS_PENDING,
  *   or TRANS_ABORTED.  The purpose is to be able to avoid doing further
