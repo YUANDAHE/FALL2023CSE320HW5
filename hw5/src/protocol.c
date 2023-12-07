@@ -13,10 +13,6 @@
 int proto_send_packet(int fd, XACTO_PACKET *pkt, void *data)
 {
     uint32_t data_len = pkt->size;
-
-    if (pkt == NULL) {
-        return -1;
-    }
     
     pkt->serial         = htonl(pkt->serial);
     pkt->size           = htonl(pkt->size);
@@ -54,10 +50,6 @@ int proto_recv_packet(int fd, XACTO_PACKET *pkt, void **datap)
     pkt->null = 1;
     uint32_t data_len = ntohl(pkt->size);
     if (data_len > 0) {
-        if (datap == NULL) {
-            return -1;
-        }
-        
         pkt_data = malloc(data_len + 1);
         memset(pkt_data, 0x00, data_len + 1);
         readn = rio_readn(fd, pkt_data, data_len);
@@ -66,7 +58,10 @@ int proto_recv_packet(int fd, XACTO_PACKET *pkt, void **datap)
             free(pkt_data);
             return -1;
         }
-        *datap = pkt_data;
+        if (datap) 
+        {
+            *datap = pkt_data;
+        }
         pkt->null = 0;
     }
     

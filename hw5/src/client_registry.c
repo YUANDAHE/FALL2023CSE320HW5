@@ -35,10 +35,6 @@ CLIENT_REGISTRY *creg_init()
 
 void creg_fini(CLIENT_REGISTRY *cr)
 {
-    if (cr == NULL) {
-        return;
-    }
-    
     free(cr);
     
     return;
@@ -46,10 +42,6 @@ void creg_fini(CLIENT_REGISTRY *cr)
 
 int creg_register(CLIENT_REGISTRY *cr, int fd)
 {
-    if (cr == NULL || fd <= 0) {
-        return -1;
-    }
-    
     pthread_mutex_lock(&client_mutex);
     FD_SET(fd, &cr->clientfd_set);
     cr->clients++;
@@ -61,11 +53,7 @@ int creg_register(CLIENT_REGISTRY *cr, int fd)
 int creg_unregister(CLIENT_REGISTRY *cr, int fd)
 {
     int ret = -1;
-
-    if (cr == NULL || fd <= 0) {
-        return -1;
-    }
-
+    
     pthread_mutex_lock(&client_mutex);
     if (FD_ISSET(fd, &cr->clientfd_set)) 
     {
@@ -85,10 +73,6 @@ int creg_unregister(CLIENT_REGISTRY *cr, int fd)
 
 void creg_wait_for_empty(CLIENT_REGISTRY *cr)
 {
-    if (cr == NULL) {
-        return;
-    }
-
     pthread_mutex_lock(&client_mutex);
     while (cr->clients > 0) 
     {
@@ -103,10 +87,6 @@ void creg_wait_for_empty(CLIENT_REGISTRY *cr)
 void creg_shutdown_all(CLIENT_REGISTRY *cr)
 {
     int i;
-
-    if (cr == NULL) {
-        return;
-    }
 
     pthread_mutex_lock(&client_mutex);
     
